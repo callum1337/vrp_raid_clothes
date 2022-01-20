@@ -912,9 +912,7 @@ Citizen.CreateThread(function()
 	end
 end)
 
-AddEventHandler("np-base:initialSpawnModelLoaded", function()
-    TriggerServerEvent("clothing:checkIfNew")
-end)
+
 
 
 
@@ -941,75 +939,6 @@ AddEventHandler("raid_clothes:hasEnough", function(menu)
     OpenMenu(menu)
 end)
 
-RegisterNetEvent("raid_clothes:setclothes")
-AddEventHandler("raid_clothes:setclothes", function(data,alreadyExist)
-    player = GetPlayerPed(-1)
-    local function setDefault()
-        Citizen.CreateThread(function()
-            firstChar = true
-            local LocalPlayer = exports["np-base"]:getModule("LocalPlayer")
-            local gender = LocalPlayer:getCurrentCharacter().gender
-            Citizen.Wait(5000)
-            if gender ~= 0 then
-                SetSkin(`mp_f_freemode_01`, true)
-            else
-                SetSkin(`mp_m_freemode_01`, true)
-            end
-            OpenMenu("clothesmenu")
-            startingMenu = true
-            SetEntityCoords(PlayerPedId(),-1038.2766113281 + (math.random(200) / 100),-2738.2648925781 + (math.random(200) / 100),20.169269561768)
-            SetEntityHeading(PlayerPedId(),328.30828857422)
-            DoScreenFadeIn(50)
-            TriggerEvent("player:receiveItem","idcard",1,true)
-            TriggerEvent("player:receiveItem","mobilephone",1)
-            TriggerEvent("tokovoip:onPlayerLoggedIn", true)
-            TriggerEvent("customNotification","Looks like you picked a character, nice job! You have a Hotel booked in the city, type /phone or press P to call a Taxi, Or, if you see one, hit F to jump inside it(this works anywhere). Once in the Taxi, mark the location on the map where you want to go for free! (Hotel 1).")
-            SetNewWaypoint(312.96966552734,-218.2705078125)
-            local dstHt = #(vector3(GetEntityCoords(PlayerPedId())) - vector3(312.96966552734,-218.2705078125,54.221797943115))
-
-            while dstHt > 50.0 do
-                dstHt = #(vector3(GetEntityCoords(PlayerPedId())) - vector3(312.96966552734,-218.2705078125,54.221797943115))
-                Citizen.Wait(1)
-            end
-
-            TriggerEvent("customNotification","Theres the Hotel, finally, go inside and check it out. Be sure to save your clothing in the dresser by typing '/outfitadd 1 New Outfit' when you are near it. (P for Phone, F1 for Actions, K for inventory - most shops will show you what to do, also, you can use gurgle on your phone for more help!)")
-            TriggerEvent("doApartHelp")
-        end)
-    end
-
-	if not data.model and alreadyExist <= 0 then setDefault() return end
-    if not data.model and alreadyExist >= 1 then return end
-    model = data.model
-    model = model ~= nil and tonumber(model) or false
-
-	if not IsModelInCdimage(model) or not IsModelValid(model) then setDefault() return end
-
-    SetSkin(model, false)
-    Citizen.Wait(500)
-    SetClothing(data.drawables, data.props, data.drawtextures, data.proptextures)
-    Citizen.Wait(500)
-	TriggerEvent("facewear:update")
-    TriggerServerEvent("raid_clothes:get_character_face")
-    TriggerServerEvent("raid_clothes:retrieve_tats")
-	TriggerServerEvent("Police:getMeta")
-end)
-
-
-RegisterNetEvent("raid_clothes:defaultReset")
-AddEventHandler("raid_clothes:defaultReset", function()
-    local LocalPlayer = exports["np-base"]:getModule("LocalPlayer")
-    local gender = LocalPlayer:getCurrentCharacter().gender
-    Citizen.Wait(1000)
-    if gender ~= 0 then
-        SetSkin(`mp_f_freemode_01`, true)
-    else
-        SetSkin(`mp_m_freemode_01`, true)
-    end
-    --SetPedHeadBlendData(PlayerPedId(), 0, 0, 0, 15, 0, 0, 0, 1.0, 0, false)
-    --menu = "clothesmenu"
-    OpenMenu("clothesmenu")
-    startingMenu = true
-end)
 
 
 RegisterNetEvent("raid_clothes:settattoos")
